@@ -1,0 +1,22 @@
+
+h1 {
+    text-align: center;
+}
+
+.sim-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sim{
+    height: 680px;
+    width: 440px;
+    background-color: black;
+}
+
+#sim-canvas{
+    height: 680px;
+    width: 440px;
+    border: 2px solid red;
+}
