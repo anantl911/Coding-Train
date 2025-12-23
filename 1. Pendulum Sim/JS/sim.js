@@ -1,5 +1,5 @@
 import { AnantGraphics } from "./utils/canvasAbstractions.js";
-import { WIDTH, HEIGHT } from "./data/params.js";
+import { WIDTH, HEIGHT, PX_PER_METER } from "./data/params.js";
 
 const ORIGIN = {
     x: WIDTH/2,
@@ -10,7 +10,7 @@ const PENDULUM = {
     x: WIDTH/2,
     y: 0,
     theta: Math.PI/(Math.random()*5),
-    len: 180,
+    len: 200,
     radi: 20
 };
 
@@ -22,12 +22,11 @@ const getCtx = () => {
 class Simulation{
     constructor(){
         this.force = 0.001;
-        this.gravity = 0.001;
+        this.gravity = 9.81;
         this.angAccel = 0.001;
         this.angVel = 0.0;
-        this.theta = Math.PI/4;
 
-        this.damepningFactor = 0.995;
+        this.dampeningRatio = 0.1;
         this.aGfx = new AnantGraphics(getCtx()); 
     }
 
@@ -44,27 +43,34 @@ class Simulation{
         this.aGfx.setBob(x, y, radi);
     }
 
-    delay = async (ms) => {
-        return new Promise(resolve => {
-            setTimeout(resolve, ms * 1000);
-        })
-    }
-
     play() {
-    const step = async () => {
-        this.force = this.gravity * Math.sin(PENDULUM.theta);
-        this.angAccel = -this.force;
-        this.angVel += this.angAccel;
-        PENDULUM.theta += this.angVel;
-        this.angVel *= this.damepningFactor;
+    
+        let last = performance.now();
 
-        this.aGfx.clear();
-        this.drawPendulum();
+        const step = async (now) => {
+
+            const { theta: THETA } = PENDULUM;
+            const L = PENDULUM.len/PX_PER_METER;
+            const G = this.gravity;
+            const omega0 = Math.sqrt(G/L); 
+
+            const dt = (now - last)/1000;
+            last = now;
+            
+            const c = 2*omega0*this.dampeningRatio;
+
+            this.angAccel = -(G/L)*Math.sin(THETA) - c*this.angVel;
+            this.angVel += this.angAccel*dt;
+            PENDULUM.theta += this.angVel*dt;
+
+            this.aGfx.clear();
+            this.drawPendulum();
+
+            requestAnimationFrame(step);
+
+        };
 
         requestAnimationFrame(step);
-
-    };
-    step();
 }
 };
 
