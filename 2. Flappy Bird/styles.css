@@ -1,0 +1,22 @@
+
+h1 {
+    text-align: center;
+}
+
+.game-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sim{
+    height: 680px;
+    width: 440px;
+    background-color: black;
+}
+
+#game-canvas{
+    height: 680px;
+    width: 440px;
+    border: 1px solid red;
+}

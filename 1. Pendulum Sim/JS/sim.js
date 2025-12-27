@@ -9,7 +9,7 @@ const ORIGIN = {
 const PENDULUM = {
     x: WIDTH/2,
     y: 0,
-    theta: Math.PI/(Math.random()*5),
+    theta: Math.PI/Math.random()*1.2,
     len: 200,
     radi: 20
 };
@@ -26,7 +26,7 @@ class Simulation{
         this.angAccel = 0.001;
         this.angVel = 0.0;
 
-        this.dampeningRatio = 0.1;
+        this.dampeningRatio = 1.1;
         this.aGfx = new AnantGraphics(getCtx()); 
     }
 
@@ -52,12 +52,12 @@ class Simulation{
             const { theta: THETA } = PENDULUM;
             const L = PENDULUM.len/PX_PER_METER;
             const G = this.gravity;
-            const omega0 = Math.sqrt(G/L); 
+            const omega0 = 1/Math.sqrt(L/G); 
 
             const dt = (now - last)/1000;
             last = now;
             
-            const c = 2*omega0*this.dampeningRatio;
+            const c = (1/(2*Math.PI))*omega0*this.dampeningRatio;
 
             this.angAccel = -(G/L)*Math.sin(THETA) - c*this.angVel;
             this.angVel += this.angAccel*dt;
